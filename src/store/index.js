@@ -9,7 +9,8 @@ export default new Vuex.Store({
   state: {
     profile: {},
     blogPosts: [],
-    activeBlogPost: {}
+    activeBlogPost: {},
+    blogComments: [],
   },
   mutations: {
     setProfile(state, profile) {
@@ -20,6 +21,9 @@ export default new Vuex.Store({
     },
     setActiveBlogPost(state, blogPost){
       state.activeBlogPost = blogPost
+    },
+    setBlogComments(state, comments){
+      state.blogComments = comments
     }
   },
   actions: {
@@ -41,7 +45,7 @@ export default new Vuex.Store({
       try {
         let res = await api.get('blogs')
         commit("setBlogPosts", res.data)
-        console.log(res.data)
+        // console.log(res.data)
       } catch (error) {
         console.error(error)
       }
@@ -49,8 +53,17 @@ export default new Vuex.Store({
     async getBlogPost({commit, dispatch}, blogPostId){
       try {
         let res = await api.get( `blogs/${blogPostId}`)
-        console.log(res.data.blog)
+        // console.log(res.data.blogs)
         commit('setActiveBlogPost', res.data.blog)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async getBlogPostComments({commit, dispatch}, blogPostId){
+      try {
+        let res = await api.get( `blogs/${blogPostId}`)
+        // console.log(res.data.comments)
+        commit('setBlogComments', res.data.comments)
       } catch (error) {
         console.error(error)
       }
@@ -63,10 +76,28 @@ export default new Vuex.Store({
         console.error(error)
       }
     },
+    async createComment({commit, dispatch}, newComment){
+      try {
+        // console.log(newComment)
+        let res = await api.post('comments', newComment)
+        dispatch('getBlogPostComments')
+        dispatch('getBlogPost')
+      } catch (error) {
+        console.error(error)
+      }
+    },
     async deleteBlogPost({commit, dispatch}, blogPostId){
       try {
         await api.delete('blogs/' + blogPostId)
         dispatch('getBlogPosts')
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async deleteComment({commit, dispatch}, commentData){
+      try {
+        await api.delete('comments/' + commentData._id)
+        dispatch('getBlogPostComments')
       } catch (error) {
         console.error(error)
       }
@@ -78,6 +109,13 @@ export default new Vuex.Store({
         commit("setActiveBlogPost", res.data);
         dispatch('getBlogPost')
 
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async editComment({commit, dispatch}, editComment){
+      try {
+        let res = await api.put(`comments/${editComment._id}`, editComment)
       } catch (error) {
         console.error(error)
       }

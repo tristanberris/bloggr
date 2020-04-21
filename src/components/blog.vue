@@ -3,6 +3,7 @@
         
         <h1 class="overflow">{{blogPostData.title}}</h1>
         <p class="overflow ">{{blogPostData.body}}</p>
+        <p class="overflow">Author:  {{blogPostData.creator.name}} </p>
         <span></span>
         <!-- <img :src="blogPostData.imgUrl" alt="" class="img-fluid" srcset /> -->
 

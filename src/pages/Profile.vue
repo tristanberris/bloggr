@@ -37,6 +37,7 @@ export default {
   created(){
         console.log("calling getBlogs method")
         this.$store.dispatch("getBlogPosts")
+        this.$store.dispatch("getProfile")
     },
     components:{
       Blog,

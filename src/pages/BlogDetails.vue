@@ -5,6 +5,7 @@
         <h1>{{blog.title}}</h1>
         <p>{{blog.body}}</p>
       </div>
+
       <div v-else-if="editing">
         <form action="" class="">
           <p>
@@ -24,6 +25,10 @@
       </p>
       <button v-if="$auth.isAuthenticated && this.$store.state.activeBlogPost.creatorEmail == this.profile.email" class="btn btn-danger"  @click="deleteBlogPost()">Delete</button>
       <button v-if="$auth.isAuthenticated && this.$store.state.activeBlogPost.creatorEmail == this.profile.email" @click="editing = true" type="button" class="btn btn-info">Edit Post</button>
+      <comment v-for="comment in comments" :commentData="comment" :key="comment.id"> </comment>
+     <CreateComment> </CreateComment>
+     
+
       <!-- <edits v-if="$auth.isAuthenticated"></edits> -->
     </div>
   </div>
@@ -32,17 +37,24 @@
 
 <script>
 import Edits from "../components/edits";
+import Comment from "../components/comment";
+import CreateComment from "../components/CreateComment"
 export default {
   name: "blog",
   name: "profile",
+  name: "comments",
+  // name: "create-comment",
+  name: "createComment",
   // props: ["blogPostData"],
   data() {
     return {
-      editing: false
+      editing: false,
+      newComment: {}
     };
   },
   created() {
     this.$store.dispatch("getBlogPost", this.$route.params.blogPostId);
+    this.$store.dispatch("getBlogPostComments", this.$route.params.blogPostId)
   },
   computed: {
     blog() {
@@ -50,6 +62,9 @@ export default {
     },
      profile() {
       return this.$store.state.profile;
+    },
+    comments(){
+      return this.$store.state.blogComments;
     }
   },
   methods: {
@@ -60,14 +75,24 @@ export default {
     editBlogPost(){
       this.$store.dispatch("editBlogPost", this.blog)
       this.editing = false
-    }
+    },
+    createComment(){
+            this.$store.dispatch("createComment", this.newComment),
+            this.newComment = {}
+            this.$router.push({
+                name: "BlogPostDetails",
+                params: this.$route.params.blogPostId
+            })
+        }
     // editBlogPost(){
     //   this.$router.push({name: "Blogs"})
     //   this.$store.dispatch("editBlogPost", this.blog._id)
     // }
   },
   components: {
-    Edits
+    Edits,
+    Comment,
+    CreateComment,
   }
 };
 </script>
