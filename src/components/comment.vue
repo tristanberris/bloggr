@@ -7,7 +7,7 @@
     <div v-else-if="editing">
       <form >
         <div class="form-group">
-          <label for="body">Edit:</label>
+          <label for="body">Edit:</label>          
           <input
             type="text"
             name="body"
